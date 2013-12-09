@@ -1,0 +1,19 @@
+{
+  "name": "test-webgl",
+  "version": "0.0.1",
+  "description": "Just playing with WebGL",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "stats.js": "*",
+    "threejs": "*"
+  }
+}
