@@ -10,24 +10,38 @@
     var renderer = window.renderer;
     var stats = window.stats;
 
-    function getRandomArbitary (min, max) {
+    var getRandomBetween = function (min, max) {
         return Math.random() * (max - min) + min;
-    }
+    };
+
+    var getRandomDirection = function () {
+        var x = getRandomBetween(-1, 1);
+        // Get y from circle equation
+        //  and randomize only it's vertical direction
+        //  (on top or on bottom of x axis on xircle equation graph)
+        var y = (1 - x * x) * (getRandomBetween(-1, 1) > 0 ? 1 : -1);
+
+        return {
+            x: x,
+            y: y
+        };
+    };
 
     var balls = [];
     var addBallToScene = function (scene, ball) {
         scene.add(ball.sphere);
         balls.push(ball);
     };
-    _.each(_.range(45), function (i) {
+    _.each(_.range(10), function (i) {
         console.log(i);
+        var direction = getRandomDirection();
         addBallToScene(
             scene,
             new Ball(
-                getRandomArbitary(-1, 1),
-                getRandomArbitary(-1, 1),
-                getRandomArbitary(0.4, 1.5),
-                getRandomArbitary(0, 16777215)//,
+                direction.x,
+                direction.y,
+                getRandomBetween(0.4, 1.5),
+                getRandomBetween(0, 16777215)//,
 //                0x00ff00
             )
         );
