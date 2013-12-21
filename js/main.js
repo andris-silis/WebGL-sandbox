@@ -61,38 +61,52 @@
         return x <= -maxX || x >= maxX;
     };
 
-    function animate (timestamp) {
-        requestAnimationFrame(animate);
-        render(timestamp);
-    }
-	requestAnimationFrame(animate);
 
-//    var z = 0;
     var oldTimestamp = 0;
-    var delta = 0;
-	function render (timestamp) {
+    var timeDelta = 0;
+    var frames = 0;
+    function animate (timestamp) {
+        if (timestamp > 15000) {
+            return;
+        }
+
         var timestampF = parseFloat(timestamp);
-        delta = timestampF - oldTimestamp;
+        timeDelta = timestampF - oldTimestamp;
+//        console.log(timestamp, timestampF, oldTimestamp, timeDelta, (new Date).getTime());
+
         oldTimestamp = timestampF;
 
-        _.each(balls, function (ball) {
-//            z++;if(z>300) {return;}
 
-            var sphere = ball.sphere;
+        requestAnimationFrame(animate);
+        render(timeDelta);
+    }
 
-            sphere.position.x += ball.dirX * BALL_SPEED * delta;
-            sphere.position.y += ball.dirY * BALL_SPEED * delta;
+//    var z = 0;
+	function render (timeDelta) {
+        frames++;
+        // skip the first(loading) frames
+        if (frames > 4) {
+            _.each(balls, function (ball) {
+    //            z++;if(z>300) {return;}
 
-            if (isBallXOutOfWindow(ball)) {
-                ball.dirX = -ball.dirX;
-            }
-            if (isBallYOutOfWindow(ball)) {
-                ball.dirY = -ball.dirY;
-            }
-        });
+                var sphere = ball.sphere;
+
+                sphere.position.x += ball.dirX * BALL_SPEED * timeDelta;
+                sphere.position.y += ball.dirY * BALL_SPEED * timeDelta;
+
+                if (isBallXOutOfWindow(ball)) {
+                    ball.dirX = -ball.dirX;
+                }
+                if (isBallYOutOfWindow(ball)) {
+                    ball.dirY = -ball.dirY;
+                }
+            });
+        }
 
         stats.update();
 
 		renderer.render(scene, camera);
 	}
+
+	requestAnimationFrame(animate);
 })(window, window.requestAnimationFrame, window._, window.THREE, window.Stats, window.Ball, window.init);
