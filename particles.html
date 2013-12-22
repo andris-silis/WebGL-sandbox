@@ -1,0 +1,76 @@
+<html>
+	<head>
+		<title></title>
+		<style>
+            body { margin: 0; padding: 0; }
+            canvas { width: 100%; height: 100% }
+        </style>
+
+	</head>
+	<body>
+        <!-- Custom shaders for particle effects -->
+        <script type="x-shader/x-vertex" id="vertexshader">
+            uniform float time;
+            attribute vec3 customColor;
+            varying vec3 vColor;
+            void main()
+            {
+                vColor = customColor; // set color associated to vertex; use later in fragment shader.
+
+                vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+                // option (1): draw particles at constant size on screen
+                // gl_PointSize = size;
+                // option (2): scale particles as objects in 3D space
+                gl_PointSize = 40.0 * ( 300.0 / length( mvPosition.xyz ) );
+                gl_Position = projectionMatrix * mvPosition;
+            }
+        </script>
+
+        <script type="x-shader/x-fragment" id="fragmentshader">
+            uniform sampler2D texture;
+            varying vec3 vColor; // colors associated to vertices, assigned by vertex shader
+            void main()
+            {
+                // calculates a color for the particle
+                gl_FragColor = vec4( vColor, 1.0 );
+                // sets a white particle texture to desired color
+                gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+            }
+        </script>
+        <script type="x-shader/x-fragment" id="fragmentshader2">
+			uniform vec3 color;
+            varying float fAlpha;
+
+			uniform sampler2D texture;
+			varying vec3 vColor;
+
+			void main() {
+				vec4 outColor = texture2D( texture, gl_PointCoord );
+				if ( outColor.a < 0.5 ) discard; // alpha be gone
+				//gl_FragColor = vec4( color * vColor.xyz, fAlpha );
+                gl_FragColor = vec4( vColor, 1.0 );
+				gl_FragColor = gl_FragColor * outColor;
+			}
+	    </script>
+        <!-- end of custom shaders -->
+
+		<script src="bower_components/lodash/dist/lodash.min.js"></script>
+		<script src="bower_components/stats.js/build/stats.min.js"></script>
+		<script src="bower_components/threejs/build/three.min.js"></script>
+
+        <script src="http://stemkoski.github.io/Three.js/js/Detector.js"></script>
+        <script src="http://stemkoski.github.io/Three.js/js/Stats.js"></script>
+
+        <script src="http://stemkoski.github.io/Three.js/js/OrbitControls.js"></script>
+        <script src="http://stemkoski.github.io/Three.js/js/THREEx.KeyboardState.js"></script>
+
+        <script src="http://stemkoski.github.io/Three.js/js/THREEx.FullScreen.js"></script>
+        <script src="http://stemkoski.github.io/Three.js/js/THREEx.WindowResize.js"></script>
+
+        <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+
+        <script src="js/particles.js"></script>
+
+	</body>
+</html>
