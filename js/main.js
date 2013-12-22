@@ -1,7 +1,7 @@
 ;(function (window, requestAnimationFrame, _, THREE, Stats, Ball, init) {
 	'use strict';
 
-    var BALL_SPEED = 0.06;
+    var BALL_SPEED = 0.02;
 
     init();
 
@@ -32,7 +32,7 @@
         scene.add(ball.sphere);
         balls.push(ball);
     };
-    _.each(_.range(10), function (i) {
+    _.each(_.range(50), function (i) {
         console.log(i);
         var direction = getRandomDirection();
         addBallToScene(
