@@ -1,9 +1,8 @@
 ;(function (window, THREE) {
 	'use strict';
 
-    window.Ball = function (dirX, dirY, size, color) {
-        this.dirX = dirX;
-        this.dirY = dirY;
+    window.Ball = function (direction, size, color) {
+        this.direction = direction;
         this.sphere = new THREE.Mesh(
             new THREE.SphereGeometry(size, 60, 60),
             new THREE.MeshPhongMaterial({ color: color })

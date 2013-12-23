@@ -1,7 +1,13 @@
 ;(function (window, requestAnimationFrame, _, THREE, Stats, Ball, init) {
 	'use strict';
 
-    var BALL_SPEED = 0.02;
+    var BALL_SPEED = 0.1;
+
+    var CANVAS_WIDTH = 200; // @TODO find a way to get these two from canvas itself
+    var CANVAS_HEIGHT = 140;
+
+    var HALF_CANVAS_WIDTH = (CANVAS_WIDTH/2);
+    var HALF_CANVAS_HEIGHT = (CANVAS_HEIGHT/2);
 
     init();
 
@@ -14,51 +20,89 @@
         return Math.random() * (max - min) + min;
     };
 
-    var getRandomDirection = function () {
-        var x = getRandomBetween(-1, 1);
-        // Get y from circle equation
-        //  and randomize only it's vertical direction
-        //  (on top or on bottom of x axis on xircle equation graph)
-        var y = (1 - x * x) * (getRandomBetween(-1, 1) > 0 ? 1 : -1);
+    var getRandomSize = function () {
+        return getRandomBetween(1, 2);
+//        return getRandomBetween(0.4, 1.5);
+    };
 
+    var getRandomColor = function () {
+//        return 16777215;
+        return getRandomBetween(1000000, 16777215);
+    };
+
+    var getRandomYPosition = function () {
+        return getRandomBetween(-HALF_CANVAS_WIDTH, HALF_CANVAS_WIDTH);
+    };
+
+    var getRandomFromPosition = function () {
+        return { x: -HALF_CANVAS_WIDTH + 20, y: getRandomYPosition() };
+    };
+
+    var getRandomToPosition = function () {
+        return { x: HALF_CANVAS_WIDTH + 20, y: getRandomYPosition() };
+    };
+
+    var getDirection = function (fromPosition, toPosition) {
+        var x1 = fromPosition.x;
+        var y1 = fromPosition.y;
+        var x2 = toPosition.x;
+        var y2 = toPosition.y;
+        // Point-slope linear equation
+        // y1 - y2 = m * (x1 - x2);
+        // y2 = - (m * (x1 - x2) - y1);
+        // m = (y1 - y2) / (x1 - x2)
+        // x changes together with time
+        var m = (y2 - y1) / (x2 - x1);
         return {
-            x: x,
-            y: y
+            x: 1,
+            y: (y2 - y1) / (x2 - x1)
         };
     };
 
+    var getNextPosition = function (currentPosition, direction, timeDelta) {
+        var nextX = currentPosition.x + direction.x * timeDelta * BALL_SPEED;
+        // y = y1 + m(x-x1)
+//        var nextY = currentPosition.y + direction.y * (nextX - currentPosition.x)
+        var nextY = currentPosition.y + direction.y * timeDelta * BALL_SPEED;
+
+        return { x: nextX, y: nextY };
+    };
+
     var balls = [];
-    var addBallToScene = function (scene, ball) {
+    var addBallToScene = function (scene, ball, startPosition) {
+        ball.sphere.position.x = startPosition.x;
+        ball.sphere.position.y = startPosition.y;
+
         scene.add(ball.sphere);
+
         balls.push(ball);
     };
-    _.each(_.range(50), function (i) {
-        console.log(i);
-        var direction = getRandomDirection();
+
+    _.each(_.range(30), function (i) {
+        var fromPosition = getRandomFromPosition();
+        var toPosition = getRandomToPosition();
+
+        var direction = getDirection(fromPosition, toPosition);
         addBallToScene(
             scene,
             new Ball(
-                direction.x,
-                direction.y,
-                getRandomBetween(0.4, 1.5),
-                getRandomBetween(0, 16777215)//,
-//                0x00ff00
-            )
+                direction,
+                getRandomSize(),
+                getRandomColor()
+            ),
+            fromPosition
         );
+        console.log(i, fromPosition, toPosition, direction);
     });
 
     var isBallYOutOfWindow = function (ball) {
         var y = ball.sphere.position.y;
-        var maxY = 150;
-//        var maxY = window.innerHeight / 2;
-        return y <= -maxY || y >= maxY;
+        return y <= -HALF_CANVAS_HEIGHT || y >= HALF_CANVAS_HEIGHT;
     };
 
     var isBallXOutOfWindow = function (ball) {
         var x = ball.sphere.position.x;
-        var maxX = 280;
-//        var maxX = window.innerWidth / 2;
-        return x <= -maxX || x >= maxX;
+        return x <= -HALF_CANVAS_WIDTH || x >= HALF_CANVAS_WIDTH;
     };
 
 
@@ -66,9 +110,9 @@
     var timeDelta = 0;
     var frames = 0;
     function animate (timestamp) {
-        if (timestamp > 15000) {
-            return;
-        }
+//        if (timestamp > 15000) {
+//            return;
+//        }
 
         var timestampF = parseFloat(timestamp);
         timeDelta = timestampF - oldTimestamp;
@@ -87,18 +131,22 @@
         // skip the first(loading) frames
         if (frames > 4) {
             _.each(balls, function (ball) {
-    //            z++;if(z>300) {return;}
-
                 var sphere = ball.sphere;
 
-                sphere.position.x += ball.dirX * BALL_SPEED * timeDelta;
-                sphere.position.y += ball.dirY * BALL_SPEED * timeDelta;
+                var newPosition = getNextPosition(
+                    sphere.position,
+                    ball.direction,
+                    timeDelta
+                );
+
+                sphere.position.x = newPosition.x;
+                sphere.position.y = newPosition.y;
 
                 if (isBallXOutOfWindow(ball)) {
-                    ball.dirX = -ball.dirX;
+                    ball.direction.x *= -1;
                 }
                 if (isBallYOutOfWindow(ball)) {
-                    ball.dirY = -ball.dirY;
+                    ball.direction.y *= -1;
                 }
             });
         }
