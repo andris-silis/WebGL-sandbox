@@ -23,8 +23,7 @@
     };
 
     var getRandomSize = function () {
-        return getRandomBetween(1, 2);
-//        return getRandomBetween(0.4, 1.5);
+        return getRandomBetween(0.7, 2);
     };
 
     var getRandomColor = function () {
