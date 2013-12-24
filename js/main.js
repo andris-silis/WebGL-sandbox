@@ -32,7 +32,7 @@
     };
 
     var getRandomYPosition = function () {
-        return getRandomBetween(-HALF_CANVAS_WIDTH, HALF_CANVAS_WIDTH);
+        return getRandomBetween(-HALF_CANVAS_WIDTH + 40, HALF_CANVAS_WIDTH - 40);
     };
 
     var getRandomFromPosition = function () {
