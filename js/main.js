@@ -1,11 +1,12 @@
 ;(function (window, requestAnimationFrame, _, THREE, Stats, Ball, init) {
 	'use strict';
 
-    var BALL_SPEED = 0.1;
     var FRAME_RATE_LIMIT = 30;
 
-    var CANVAS_WIDTH = 200; // @TODO find a way to get these two from canvas itself
-    var CANVAS_HEIGHT = 140;
+    var BALL_SPEED = 0.06;
+
+    var CANVAS_WIDTH = 280; // @TODO find a way to get these two from canvas itself
+    var CANVAS_HEIGHT = 170;
 
     var HALF_CANVAS_WIDTH = (CANVAS_WIDTH/2);
     var HALF_CANVAS_HEIGHT = (CANVAS_HEIGHT/2);
