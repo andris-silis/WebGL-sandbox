@@ -2,6 +2,7 @@
 	'use strict';
 
     var BALL_SPEED = 0.1;
+    var FRAME_RATE_LIMIT = 30;
 
     var CANVAS_WIDTH = 200; // @TODO find a way to get these two from canvas itself
     var CANVAS_HEIGHT = 140;
@@ -121,7 +122,10 @@
         oldTimestamp = timestampF;
 
 
-        requestAnimationFrame(animate);
+        setTimeout( function() {
+            requestAnimationFrame( animate );
+        }, 1000/FRAME_RATE_LIMIT);
+
         render(timeDelta);
     }
 
