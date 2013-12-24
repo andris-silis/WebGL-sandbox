@@ -110,6 +110,16 @@
         return x <= -HALF_CANVAS_WIDTH + 10 || x >= HALF_CANVAS_WIDTH - 10;
     };
 
+    var removeBalls = function (ballsToRemove) {
+        if (ballsToRemove.length === 0) {
+            return;
+        }
+        balls = _.difference(balls, ballsToRemove);
+        _(ballsToRemove).each(function (ball) {
+            ball.sphere.visible = false;
+            scene.remove(ball.sphere);
+        });
+    };
 
     var oldTimestamp = 0;
     var timeDelta = 0;
@@ -136,28 +146,31 @@
 //    var z = 0;
 	function render (timeDelta) {
         frames++;
-        // skip the first(loading) frames
-        if (frames > 4) {
-            _.each(balls, function (ball) {
-                var sphere = ball.sphere;
 
-                var newPosition = getNextPosition(
-                    sphere.position,
-                    ball.direction,
-                    timeDelta
-                );
+        _.each(balls, function (ball) {
+            var sphere = ball.sphere;
 
-                sphere.position.x = newPosition.x;
-                sphere.position.y = newPosition.y;
+            var newPosition = getNextPosition(
+                sphere.position,
+                ball.direction,
+                timeDelta
+            );
 
-                if (isBallXOutOfWindow(ball)) {
-                    ball.direction.x *= -1;
-                }
-                if (isBallYOutOfWindow(ball)) {
-                    ball.direction.y *= -1;
-                }
-            });
-        }
+            sphere.position.x = newPosition.x;
+            sphere.position.y = newPosition.y;
+        });
+
+        var ballsToRemove = [];
+        _.each(balls, function (ball) {
+            if (isBallXOutOfWindow(ball)) {
+                ballsToRemove.push(ball);
+            }
+            if (isBallYOutOfWindow(ball)) {
+                ballsToRemove.push(ball);
+            }
+        });
+
+        removeBalls(ballsToRemove);
 
         stats.update();
 
