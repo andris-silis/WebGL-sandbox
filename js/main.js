@@ -70,9 +70,13 @@
     };
 
     var balls = [];
+    var setBallPosition = function (ball, position) {
+        ball.sphere.position.x = position.x;
+        ball.sphere.position.y = position.y;
+    };
+
     var addBallToScene = function (scene, ball, startPosition) {
-        ball.sphere.position.x = startPosition.x;
-        ball.sphere.position.y = startPosition.y;
+        setBallPosition(ball, startPosition);
 
         scene.add(ball.sphere);
 
