@@ -102,12 +102,12 @@
 
     var isBallYOutOfWindow = function (ball) {
         var y = ball.sphere.position.y;
-        return y <= -HALF_CANVAS_HEIGHT || y >= HALF_CANVAS_HEIGHT;
+        return y <= -HALF_CANVAS_HEIGHT + 10 || y >= HALF_CANVAS_HEIGHT - 10;
     };
 
     var isBallXOutOfWindow = function (ball) {
         var x = ball.sphere.position.x;
-        return x <= -HALF_CANVAS_WIDTH || x >= HALF_CANVAS_WIDTH;
+        return x <= -HALF_CANVAS_WIDTH + 10 || x >= HALF_CANVAS_WIDTH - 10;
     };
 
 
