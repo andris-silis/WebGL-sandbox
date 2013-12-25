@@ -36,11 +36,11 @@
     };
 
     var getRandomFromPosition = function () {
-        return { x: -HALF_CANVAS_WIDTH + 20, y: getRandomYPosition() };
+        return new THREE.Vector3(-HALF_CANVAS_WIDTH + 20, getRandomYPosition(), 0.0);
     };
 
     var getRandomToPosition = function () {
-        return { x: HALF_CANVAS_WIDTH + 20, y: getRandomYPosition() };
+        return new THREE.Vector3(HALF_CANVAS_WIDTH - 20, getRandomYPosition(), 0.0);
     };
 
     var getDirection = function (fromPosition, toPosition) {
@@ -54,26 +54,20 @@
         // m = (y1 - y2) / (x1 - x2)
         // x changes together with time
         var m = (y2 - y1) / (x2 - x1);
-        return {
-            x: 1,
-            y: (y2 - y1) / (x2 - x1)
-        };
+        return new THREE.Vector3(1, m, 0.0);
     };
 
     var getNextPosition = function (currentPosition, direction, timeDelta) {
         var nextX = currentPosition.x + direction.x * timeDelta * BALL_SPEED;
-        // y = y1 + m(x-x1)
-//        var nextY = currentPosition.y + direction.y * (nextX - currentPosition.x)
         var nextY = currentPosition.y + direction.y * timeDelta * BALL_SPEED;
 
-        return { x: nextX, y: nextY };
+        return new THREE.Vector3(nextX, nextY, 0.0);
     };
 
     var balls = [];
     var ballsRecycle = [];
     var setBallPosition = function (ball, position) {
-        ball.sphere.position.x = position.x;
-        ball.sphere.position.y = position.y;
+        ball.sphere.position = position;
     };
 
     var addBallToScene = function (scene, ball, startPosition) {
@@ -159,9 +153,7 @@
                 ball.direction,
                 timeDelta
             );
-
-            sphere.position.x = newPosition.x;
-            sphere.position.y = newPosition.y;
+            setBallPosition(ball, newPosition);
         });
 
         var ballsToRemove = [];
